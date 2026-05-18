@@ -2,14 +2,14 @@ const dotenv = require("dotenv");
 const express = require('express');
 const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 6001;
 dotenv.config();
 
 
 app.use(cors());
 app.use(express.json());
-const uri = "mongodb+srv://doctorAppointment:I3jvJ4pBTTImlTGT@cluster0.vb0xegb.mongodb.net/?appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -24,11 +24,26 @@ async function run() {
     await client.connect();
     const db = client.db("doctorAppointment");
     const appointCollection = db.collection("appointments");
+    const bookinCollection = db.collection("booking")
 
 
-    app.get('/appointments', async (req, res) => { 
+    app.get('/appointments', async (req, res) => {
       const cursor = appointCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+
+    app.get('/appointments/:id', async (req, res) => {
+      const id  = req.params.id;
+      const result = await appointCollection.findOne({ _id: new ObjectId(id) })
+      res.send(result);
+    });
+
+    app.post('/booking', async (req, res) => { 
+      const bookingData = req.body;
+      console.log(bookingData);
+      const result = await bookinCollection.insertOne(bookingData);
       res.send(result);
     })
     
