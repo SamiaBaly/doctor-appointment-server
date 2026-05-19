@@ -63,6 +63,7 @@ async function run() {
     });
 
 
+    
     app.delete('/booking/:id', async(req,res)=>{
       const {id}=req.params;
       const result =await bookinCollection.deleteOne({_id:new ObjectId(id)})
