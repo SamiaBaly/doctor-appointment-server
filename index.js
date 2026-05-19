@@ -24,7 +24,7 @@ async function run() {
     await client.connect();
     const db = client.db("doctorAppointment");
     const appointCollection = db.collection("appointments");
-    const bookinCollection = db.collection("booking")
+    const bookinCollection = db.collection("booking");
 
 
     app.get('/appointments', async (req, res) => {
@@ -42,8 +42,30 @@ async function run() {
 
     app.post('/booking', async (req, res) => { 
       const bookingData = req.body;
-      console.log(bookingData);
+   
       const result = await bookinCollection.insertOne(bookingData);
+      res.send(result);
+    })
+
+
+    app.get("/booking/:userId", async (req, res) => { 
+      const { userId } = req.params;
+      const result = await bookinCollection.find({ userId }).toArray();
+      res.send(result)
+    })
+
+    app.patch("/booking/:id", async (req, res) => { 
+      const {id} = req.params
+      const updateData = req.body
+      const result = await bookinCollection.updateOne({ _id: new ObjectId(id) },
+        { $set: updateData })
+        res.send(result)
+    });
+
+
+    app.delete('/booking/:id', async(req,res)=>{
+      const {id}=req.params;
+      const result =await bookinCollection.deleteOne({_id:new ObjectId(id)})
       res.send(result);
     })
     
