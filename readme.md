@@ -18,11 +18,8 @@ A modern doctor appointment booking system built with **Next.js App Router**, **
 
 ## 🛠️ Tech Stack
 
-- Next.js (App Router)
-- React Server Components
-- Tailwind CSS
-- Auth Client (session-based auth)
-- REST API (Express / backend server)
+- nodemon.js
+- mongodb dadatabase
 
 ---
 
@@ -43,9 +40,11 @@ A modern doctor appointment booking system built with **Next.js App Router**, **
 - auth-client.js
 - auth.js
 
-## 🔐 Authentication (Server Side)
 
-We use server session to get user data:
+
+---
+
+## 🔐 Authentication (Server Side)
 
 ```js
 import { auth } from '@/lib/auth';
@@ -54,6 +53,12 @@ import { headers } from 'next/headers';
 const session = await auth.api.getSession({
   headers: headers(),
 });
-
 ```
+## 🌐Live Demo
+
+- 👉 https://book-library-a8-git-main-samiabalys-projects.vercel.app/
+
+## 👨‍💻 Author
+
+Developed by **Samia Baly**
 
