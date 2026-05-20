@@ -58,9 +58,7 @@ async function run() {
       res.send(result);
     });
 
-    
-
-
+  
     app.get('/appointments/:id',verifyToken, async (req, res) => {
       const id  = req.params.id;
       const result = await appointCollection.findOne({ _id: new ObjectId(id) })
