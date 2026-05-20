@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 const port = process.env.PORT || 6001;
 dotenv.config();
 
@@ -18,6 +19,30 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
+const JWKS = createRemoteJWKSet(
+  new URL("http://localhost:3000/api/auth/jwks")
+)
+
+const verifyToken =async (req, res, next) => {
+  const authHeader = req?.headers.authorization;
+  if (!authHeader) {
+    return res.status(401), json({ messege: "Unauthorized" });
+  }
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401). json({ messege: "Unauthorized" });
+  }
+  try {
+    const { payload } = await jwtVerify(token, JWKS)
+    req.user = payload;
+    console.log(payload);
+    next();
+  } catch (error) { 
+    return res.status(403).json({ messege: "Forbidden" });
+  }
+  
+};
 async function run() {
   try {
     
@@ -33,14 +58,16 @@ async function run() {
       res.send(result);
     });
 
+    
 
-    app.get('/appointments/:id', async (req, res) => {
+
+    app.get('/appointments/:id',verifyToken, async (req, res) => {
       const id  = req.params.id;
       const result = await appointCollection.findOne({ _id: new ObjectId(id) })
       res.send(result);
     });
 
-    app.post('/booking', async (req, res) => { 
+    app.post('/booking',verifyToken, async (req, res) => { 
       const bookingData = req.body;
    
       const result = await bookinCollection.insertOne(bookingData);
@@ -48,13 +75,13 @@ async function run() {
     })
 
 
-    app.get("/booking/:userId", async (req, res) => { 
+    app.get("/booking/:userId",verifyToken, async (req, res) => { 
       const { userId } = req.params;
       const result = await bookinCollection.find({ userId }).toArray();
       res.send(result)
     })
 
-    app.patch("/booking/:id", async (req, res) => { 
+    app.patch("/booking/:id",verifyToken, async (req, res) => { 
       const {id} = req.params
       const updateData = req.body
       const result = await bookinCollection.updateOne({ _id: new ObjectId(id) },
@@ -63,8 +90,8 @@ async function run() {
     });
 
 
-    
-    app.delete('/booking/:id', async(req,res)=>{
+
+    app.delete('/booking/:id',verifyToken, async(req,res)=>{
       const {id}=req.params;
       const result =await bookinCollection.deleteOne({_id:new ObjectId(id)})
       res.send(result);
