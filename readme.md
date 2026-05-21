@@ -26,7 +26,7 @@ A modern doctor appointment booking system built with **Next.js App Router**, **
 ## 📁 Project Structure
 
 ### /app
-- page.js
+```- page.js
 - layout.js
 - profile/page.js
 - doctors/page.js
@@ -43,6 +43,7 @@ A modern doctor appointment booking system built with **Next.js App Router**, **
 
 
 ---
+```
 
 ## 🔐 Authentication (Server Side)
 
@@ -56,7 +57,7 @@ const session = await auth.api.getSession({
 ```
 ## 🌐Live Demo
 
-- 👉 https://book-library-a8-git-main-samiabalys-projects.vercel.app/
+- 👉 https://doctor-appointment-client-sigma.vercel.app/
 
 ## 👨‍💻 Author
 
