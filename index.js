@@ -36,7 +36,7 @@ const verifyToken =async (req, res, next) => {
   try {
     const { payload } = await jwtVerify(token, JWKS)
     req.user = payload;
-    console.log(payload);
+    
     next();
   } catch (error) { 
     return res.status(403).json({ messege: "Forbidden" });
@@ -57,14 +57,14 @@ async function run() {
     })
 
 
-    app.get('/appointments', async (req, res) => {
+    app.get('/appointments', verifyToken, async (req, res) => {
       const cursor = appointCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
-    app.get('/appointments/:id',verifyToken, async (req, res) => {
-      const id  = req.params.id;
+    app.get('/appointments/:id', verifyToken, async (req, res) => {
+      const {id}  = req.params;
       const result = await appointCollection.findOne({ _id: new ObjectId(id) })
       res.send(result);
     });
